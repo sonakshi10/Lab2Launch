@@ -1,0 +1,8 @@
+pandas 
+sqlalchemy 
+chromadb 
+sentence-transformers 
+openpyxl
+pypdf
+streamlit
+requests
