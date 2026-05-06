@@ -6,3 +6,11 @@ openpyxl
 pypdf
 streamlit
 requests
+chromadb==0.5.23 
+langchain-community 
+langchain-text-splitters 
+gspread 
+langchain-core
+passlib[bcrypt]
+fastapi
+uvicorn
