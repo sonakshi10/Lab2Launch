@@ -19,19 +19,62 @@ def _shorten(text, limit=420):
     return text[:limit].rsplit(" ", 1)[0] + "..."
 
 
+def _match_score(distance):
+    if distance in (None, ""):
+        return "-"
+    try:
+        return f"{round(100 / (1 + float(distance)))}%"
+    except (TypeError, ValueError):
+        return "-"
+
+
+def _metric_card(label, value, note=""):
+    st.markdown(
+        f"""
+        <div class="dash-card">
+            <div class="dash-label">{label}</div>
+            <div class="dash-value">{value or "-"}</div>
+            <div class="dash-note">{note}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _dashboard_metrics(items):
+    cols = st.columns(len(items))
+    for col, item in zip(cols, items):
+        with col:
+            _metric_card(*item)
+
+
+def _percent(value):
+    try:
+        return f"{round(float(value) * 100)}%"
+    except (TypeError, ValueError):
+        return "-"
+
+
 def _show_project(project):
     with st.container(border=True):
         st.markdown(f"**{project.get('project_id', '')} - {project.get('company_name', '')}**")
-        st.caption(
-            f"{project.get('domain', '')} | {project.get('status', '')} | "
-            f"risk: {project.get('risk', '-')}"
+        st.markdown(
+            f"""
+            <span class="result-pill">Match {_match_score(project.get("distance"))}</span>
+            <span class="result-pill">{project.get("status") or "Status -"}</span>
+            <span class="result-pill">{project.get("risk") or "Risk -"}</span>
+            """,
+            unsafe_allow_html=True,
         )
         st.write(_shorten(project.get("problem")))
-        cols = st.columns(4)
-        cols[0].metric("Budget", project.get("budget") or "-")
-        cols[1].metric("Timeline", project.get("timeline") or "-")
-        cols[2].metric("Team", project.get("team_size") or "-")
-        cols[3].metric("Mode", project.get("collaboration_type") or "-")
+        _dashboard_metrics([
+            ("Budget", project.get("budget"), "Capital need"),
+            ("Timeline", project.get("timeline"), "Expected duration"),
+            ("Team", project.get("team_size"), "Delivery capacity"),
+            ("Mode", project.get("collaboration_type"), "Engagement type"),
+        ])
+        if project.get("domain"):
+            st.caption(_shorten(project.get("domain"), 220))
         if project.get("targets"):
             st.caption(_shorten(project.get("targets"), 260))
 
@@ -46,6 +89,14 @@ def investor_page():
     ])
 
     with tab1:
+        _dashboard_metrics([
+            ("Budget", st.session_state.get("iv7", "-"), "Capital allocation"),
+            ("Risk", st.session_state.get("iv4", st.session_state.get("invp4", "-")), "Investment appetite"),
+            ("Funded", st.session_state.get("iv10", 0), "Projects backed"),
+            ("Success", _percent(st.session_state.get("iv9", 0)), "Portfolio rate"),
+        ])
+        st.divider()
+
         st.subheader("Investor Profile")
         st.caption("Define your investment interests and funding preferences.")
 
@@ -106,6 +157,14 @@ def investor_page():
                     st.error(f"Could not save investor profile: {exc}")
 
     with tab2:
+        _dashboard_metrics([
+            ("Opportunities", len(st.session_state.get("investor_project_matches", [])), "Projects loaded"),
+            ("Risk Target", st.session_state.get("iv4", st.session_state.get("invp4", "-")), "Preferred risk"),
+            ("Focus", st.session_state.get("iv5", st.session_state.get("invp5", "-")), "Geography"),
+            ("Domains", _shorten(st.session_state.get("iv3", st.session_state.get("invp3", "-")), 32), "Investment thesis"),
+        ])
+        st.divider()
+
         st.subheader("Find Projects to Fund")
         st.caption("Search for projects that match your investment interests.")
 
@@ -135,12 +194,27 @@ def investor_page():
 
         projects = st.session_state.get("investor_project_matches", [])
         if projects:
+            _dashboard_metrics([
+                ("Projects", len(projects), "Opportunities returned"),
+                ("Best Match", _match_score(projects[0].get("distance")), "Top semantic score"),
+                ("Budgets", len([p for p in projects if p.get("budget")]), "With budget data"),
+                ("Risks", len({p.get("risk") for p in projects if p.get("risk")}), "Distinct appetites"),
+            ])
             for project in projects:
                 _show_project(project)
         else:
             st.info("Run a search to see investable projects.")
 
     with tab3:
+        portfolio = st.session_state.get("investor_portfolio", [])
+        _dashboard_metrics([
+            ("Portfolio", len(portfolio), "Linked projects"),
+            ("Active", len([p for p in portfolio if "progress" in str(p.get("status", "")).lower()]), "In progress"),
+            ("Domains", len({p.get("domain") for p in portfolio if p.get("domain")}), "Represented"),
+            ("Capital", len([p for p in portfolio if p.get("budget")]), "Budgeted projects"),
+        ])
+        st.divider()
+
         st.subheader("Portfolio")
         st.caption("Projects currently linked to your investor ID.")
 
@@ -163,7 +237,6 @@ def investor_page():
                 except Exception as exc:
                     st.error(f"Could not load portfolio: {exc}")
 
-        portfolio = st.session_state.get("investor_portfolio", [])
         if portfolio:
             for project in portfolio:
                 _show_project(project)

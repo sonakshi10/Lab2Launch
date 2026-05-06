@@ -25,15 +25,56 @@ def _shorten(text, limit=420):
     return text[:limit].rsplit(" ", 1)[0] + "..."
 
 
+def _count_terms(text):
+    return len([term for term in str(text or "").replace("\n", ",").split(",") if term.strip()])
+
+
+def _match_score(distance):
+    if distance in (None, ""):
+        return "-"
+    try:
+        return f"{round(100 / (1 + float(distance)))}%"
+    except (TypeError, ValueError):
+        return "-"
+
+
+def _metric_card(label, value, note=""):
+    st.markdown(
+        f"""
+        <div class="dash-card">
+            <div class="dash-label">{label}</div>
+            <div class="dash-value">{value or "-"}</div>
+            <div class="dash-note">{note}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _dashboard_metrics(items):
+    cols = st.columns(len(items))
+    for col, item in zip(cols, items):
+        with col:
+            _metric_card(*item)
+
+
 def _show_project(project):
     with st.container(border=True):
         st.markdown(f"**{project.get('project_id', '')} - {project.get('company_name', '')}**")
+        st.markdown(
+            f"""
+            <span class="result-pill">Match {_match_score(project.get("distance"))}</span>
+            <span class="result-pill">{project.get("risk") or "Risk -"}</span>
+            <span class="result-pill">{project.get("collaboration_type") or "Collaboration -"}</span>
+            """,
+            unsafe_allow_html=True,
+        )
         st.write(_shorten(project.get("problem")))
-        cols = st.columns(4)
-        cols[0].metric("Domain", _shorten(project.get("domain"), 32))
-        cols[1].metric("Budget", project.get("budget") or "-")
-        cols[2].metric("Risk", project.get("risk") or "-")
-        cols[3].metric("Timeline", project.get("timeline") or "-")
+        _dashboard_metrics([
+            ("Budget", project.get("budget"), "Available funding"),
+            ("Timeline", project.get("timeline"), "Expected duration"),
+            ("Domain", _shorten(project.get("domain"), 38), "Opportunity area"),
+        ])
         if project.get("targets"):
             st.caption(_shorten(project.get("targets"), 240))
 
@@ -42,10 +83,15 @@ def _show_researcher(researcher):
     with st.container(border=True):
         st.markdown(f"**{researcher.get('name') or researcher.get('researcher_id')}**")
         st.caption(f"{researcher.get('affiliation', '')} | {researcher.get('country', '')}")
-        cols = st.columns(3)
-        cols[0].metric("h-index", researcher.get("h_index") or "-")
-        cols[1].metric("i10-index", researcher.get("i10_index") or "-")
-        cols[2].metric("Grants", researcher.get("grants") or "-")
+        st.markdown(
+            f"""<span class="result-pill">Match {_match_score(researcher.get("distance"))}</span>""",
+            unsafe_allow_html=True,
+        )
+        _dashboard_metrics([
+            ("h-index", researcher.get("h_index"), "Research impact"),
+            ("i10-index", researcher.get("i10_index"), "10+ citation papers"),
+            ("Grants", researcher.get("grants"), "Funded work"),
+        ])
         st.write(f"Matched paper: {researcher.get('matching_paper_title', '-')}")
         if researcher.get("keywords"):
             st.caption(researcher["keywords"])
@@ -56,7 +102,20 @@ def _show_paper(paper):
         st.markdown(f"**{paper.get('title') or paper.get('paper_id')}**")
         st.caption(
             f"{paper.get('paper_id', '')} | {paper.get('venue', '')} | "
-            f"{paper.get('year', '')} | citations: {paper.get('citations', '-')}"
+            f"{paper.get('year', '')}"
+        )
+        _dashboard_metrics([
+            ("Match", _match_score(paper.get("distance")), "Semantic relevance"),
+            ("Impact", paper.get("impact_score"), "Paper impact score"),
+            ("Citations", paper.get("citations"), "Citation count"),
+            ("Pages", paper.get("pages"), "Length"),
+        ])
+        st.markdown(
+            f"""
+            <span class="result-pill">{paper.get("paper_type") or "Type -"}</span>
+            <span class="result-pill">{paper.get("researcher_id") or "Researcher -"}</span>
+            """,
+            unsafe_allow_html=True,
         )
         st.write(_shorten(paper.get("summary") or paper.get("abstract")))
         if paper.get("keywords"):
@@ -77,6 +136,14 @@ def researcher_page():
     # PROFILE + OPPORTUNITIES
     # -------------------------
     with tab1:
+        _dashboard_metrics([
+            ("h-index", st.session_state.get("rp4", 0), "Impact of published work"),
+            ("i10-index", st.session_state.get("rp5", 0), "Papers with 10+ citations"),
+            ("Keywords", _count_terms(st.session_state.get("rp6", "")), "Research signals"),
+            ("Matches", len(st.session_state.get("relevant_projects", [])), "Relevant projects loaded"),
+        ])
+        st.divider()
+
         st.subheader("Researcher Profile")
         st.caption("These details help match you with projects and collaborators.")
 
@@ -173,6 +240,11 @@ def researcher_page():
 
         projects = st.session_state.get("relevant_projects", [])
         if projects:
+            _dashboard_metrics([
+                ("Projects", len(projects), "Opportunities returned"),
+                ("Best Match", _match_score(projects[0].get("distance")), "Top semantic score"),
+                ("Budgets", len([p for p in projects if p.get("budget")]), "With budget data"),
+            ])
             for project in projects:
                 _show_project(project)
         else:
@@ -205,6 +277,11 @@ def researcher_page():
 
         researchers = st.session_state.get("similar_researchers", [])
         if researchers:
+            _dashboard_metrics([
+                ("Researchers", len(researchers), "Potential collaborators"),
+                ("Best Match", _match_score(researchers[0].get("distance")), "Top semantic score"),
+                ("Countries", len({r.get("country") for r in researchers if r.get("country")}), "Represented"),
+            ])
             for researcher in researchers:
                 _show_researcher(researcher)
 
@@ -213,6 +290,13 @@ def researcher_page():
     # -------------------------
     with tab2:
         st.subheader("Upload Research Paper")
+        _dashboard_metrics([
+            ("Impact", st.session_state.get("p5", 0), "Entered score"),
+            ("Citations", st.session_state.get("p6", 0), "Entered count"),
+            ("Pages", st.session_state.get("p7", 10), "Entered length"),
+            ("Keywords", _count_terms(st.session_state.get("p8", "")), "Indexing terms"),
+        ])
+        st.divider()
 
         uploaded_file = st.file_uploader("Upload PDF", type=["pdf"], key="paper_pdf")
 
@@ -293,5 +377,10 @@ def researcher_page():
 
         papers = st.session_state.get("paper_search_results", [])
         if papers:
+            _dashboard_metrics([
+                ("Papers", len(papers), "Search results"),
+                ("Best Match", _match_score(papers[0].get("distance")), "Top semantic score"),
+                ("Citations", sum(int(p.get("citations") or 0) for p in papers), "Across results"),
+            ])
             for paper in papers:
                 _show_paper(paper)

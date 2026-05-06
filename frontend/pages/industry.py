@@ -19,15 +19,59 @@ def _shorten(text, limit=420):
     return text[:limit].rsplit(" ", 1)[0] + "..."
 
 
+def _match_score(distance):
+    if distance in (None, ""):
+        return "-"
+    try:
+        return f"{round(100 / (1 + float(distance)))}%"
+    except (TypeError, ValueError):
+        return "-"
+
+
+def _percent(value):
+    try:
+        return f"{round(float(value) * 100)}%"
+    except (TypeError, ValueError):
+        return "-"
+
+
+def _metric_card(label, value, note=""):
+    st.markdown(
+        f"""
+        <div class="dash-card">
+            <div class="dash-label">{label}</div>
+            <div class="dash-value">{value or "-"}</div>
+            <div class="dash-note">{note}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _dashboard_metrics(items):
+    cols = st.columns(len(items))
+    for col, item in zip(cols, items):
+        with col:
+            _metric_card(*item)
+
+
 def _show_researcher(researcher):
     with st.container(border=True):
         st.markdown(f"**{researcher.get('name') or researcher.get('researcher_id')}**")
         st.caption(f"{researcher.get('affiliation', '')} | {researcher.get('country', '')}")
-        cols = st.columns(4)
-        cols[0].metric("h-index", researcher.get("h_index") or "-")
-        cols[1].metric("i10-index", researcher.get("i10_index") or "-")
-        cols[2].metric("Patents", researcher.get("patents") or "-")
-        cols[3].metric("Grants", researcher.get("grants") or "-")
+        st.markdown(
+            f"""
+            <span class="result-pill">Match {_match_score(researcher.get("distance"))}</span>
+            <span class="result-pill">{researcher.get("language") or "Language -"}</span>
+            """,
+            unsafe_allow_html=True,
+        )
+        _dashboard_metrics([
+            ("h-index", researcher.get("h_index"), "Research impact"),
+            ("i10-index", researcher.get("i10_index"), "10+ citation papers"),
+            ("Patents", researcher.get("patents"), "IP signal"),
+            ("Grants", researcher.get("grants"), "Funded work"),
+        ])
         st.write(f"Matched paper: {researcher.get('matching_paper_title', '-')}")
         st.caption(_shorten(researcher.get("summary"), 260))
 
@@ -36,11 +80,12 @@ def _show_investor(investor):
     with st.container(border=True):
         st.markdown(f"**{investor.get('name') or investor.get('investor_id')}**")
         st.caption(f"{investor.get('investor_type', '')} | {investor.get('geo', '')}")
-        cols = st.columns(4)
-        cols[0].metric("Budget", investor.get("budget") or "-")
-        cols[1].metric("Risk", investor.get("risk") or "-")
-        cols[2].metric("Funded", investor.get("projects_funded") or "-")
-        cols[3].metric("Success", investor.get("success_rate") or "-")
+        _dashboard_metrics([
+            ("Budget", investor.get("budget"), "Capital available"),
+            ("Risk", investor.get("risk"), "Risk appetite"),
+            ("Funded", investor.get("projects_funded"), "Projects backed"),
+            ("Success", _percent(investor.get("success_rate")), "Portfolio rate"),
+        ])
         st.write(_shorten(investor.get("domains"), 280))
         if investor.get("previous_projects"):
             st.caption(f"Previous projects: {investor['previous_projects']}")
@@ -56,6 +101,14 @@ def industry_page():
     ])
 
     with tab1:
+        _dashboard_metrics([
+            ("Company", st.session_state.get("ip2", "-"), st.session_state.get("ip3", "Domain not set")),
+            ("Researcher Matches", len(st.session_state.get("industry_researcher_matches", [])), "Loaded candidates"),
+            ("Investors", len(st.session_state.get("industry_investors", [])), "Loaded funders"),
+            ("Project", st.session_state.get("pr1", "-"), st.session_state.get("pr5", "Risk not set")),
+        ])
+        st.divider()
+
         st.subheader("Find Researchers")
         st.caption("Describe your problem to find relevant researchers.")
 
@@ -81,12 +134,26 @@ def industry_page():
 
         matches = st.session_state.get("industry_researcher_matches", [])
         if matches:
+            _dashboard_metrics([
+                ("Matches", len(matches), "Researchers returned"),
+                ("Best Match", _match_score(matches[0].get("distance")), "Top semantic score"),
+                ("Patents", sum(int(m.get("patents") or 0) for m in matches), "Across results"),
+                ("Countries", len({m.get("country") for m in matches if m.get("country")}), "Represented"),
+            ])
             for researcher in matches:
                 _show_researcher(researcher)
         else:
             st.info("Run a search to see researcher matches.")
 
     with tab2:
+        _dashboard_metrics([
+            ("Employees", st.session_state.get("b7", 0), "Company scale"),
+            ("Data Maturity", st.session_state.get("b9", "-"), "Execution readiness"),
+            ("Risk", st.session_state.get("pr5", "-"), "Project appetite"),
+            ("Public", "Yes" if st.session_state.get("pr_public", True) else "No", "Investor visibility"),
+        ])
+        st.divider()
+
         st.subheader("Business Information")
         st.caption("This helps improve matching accuracy.")
 
@@ -239,6 +306,13 @@ def industry_page():
 
         investors = st.session_state.get("industry_investors", [])
         if investors:
+            funded_total = sum(int(i.get("projects_funded") or 0) for i in investors)
+            _dashboard_metrics([
+                ("Investors", len(investors), "Funders returned"),
+                ("Funded Projects", funded_total, "Across returned investors"),
+                ("Risk Profiles", len({i.get("risk") for i in investors if i.get("risk")}), "Distinct appetites"),
+                ("Regions", len({i.get("geo") for i in investors if i.get("geo")}), "Geographic focus"),
+            ])
             for investor in investors:
                 _show_investor(investor)
         else:

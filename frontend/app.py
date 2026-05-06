@@ -35,6 +35,49 @@ div.stButton > button:hover {
     background-color: #0a4e3f;
 }
 
+.dash-card {
+    border: 1px solid #d9e3df;
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    background: #ffffff;
+    min-height: 92px;
+}
+
+.dash-label {
+    color: #5f6f69;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    margin-bottom: 0.35rem;
+}
+
+.dash-value {
+    color: #14231f;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.dash-note {
+    color: #6f7f79;
+    font-size: 0.82rem;
+    margin-top: 0.35rem;
+    line-height: 1.35;
+}
+
+.result-pill {
+    display: inline-block;
+    border: 1px solid #cfded8;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    margin: 0.1rem 0.25rem 0.1rem 0;
+    background: #f6faf8;
+    color: #23443b;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
 .delete-btn button {
     background-color: #a23b3b !important;
 }
