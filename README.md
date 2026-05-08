@@ -1,6 +1,6 @@
 <p align="center">
   <img src="Lab2Launchlogo.png" alt="Lab2Launch Logo" width="230"/>
-  <br><br>
+  <br>
   <b>AI-powered matchmaking for researchers, businesses, and investors</b>
   <br>
   So great research does not stay stuck in PDFs.
