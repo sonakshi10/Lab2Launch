@@ -1,8 +1,22 @@
-# 🚀 Lab2Launch
+<p align="center">
+  <img src="Lab2Launchlogo.png" alt="Lab2Launch Logo" width="230"/>
+</p>
 
-**Research • Connect • Launch**
+<h1 align="center">🚀 Lab2Launch</h1>
 
-> AI-powered matchmaking for researchers, businesses, and investors — so great research does not stay stuck in PDFs.
+<p align="center">
+  <b>AI-powered matchmaking for researchers, businesses, and investors</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Research-Gold-D4A017?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Connect-Cobalt%20Blue-0047AB?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Launch-Grey-808080?style=for-the-badge" />
+</p>
+
+<p align="center">
+  So great research does not stay stuck in PDFs.
+</p>
 
 ---
 
@@ -53,6 +67,47 @@ We filter, retrieve, rank, and then explain only the best matches.
 
 ---
 
+## 🖼️ Interface Preview
+
+Add screenshots of your prototype here.
+
+### Login / Role Selection
+
+<p align="center">
+  <img src="assets/screenshots/login.png" alt="Login Screen" width="800"/>
+</p>
+
+### Researcher Dashboard
+
+<p align="center">
+  <img src="assets/screenshots/researcher-dashboard.png" alt="Researcher Dashboard" width="800"/>
+</p>
+
+### Business Matching Dashboard
+
+<p align="center">
+  <img src="assets/screenshots/business-dashboard.png" alt="Business Dashboard" width="800"/>
+</p>
+
+### Investor Project Matching
+
+<p align="center">
+  <img src="assets/screenshots/investor-dashboard.png" alt="Investor Dashboard" width="800"/>
+</p>
+
+Suggested screenshot folder:
+
+```text
+assets/
+└── screenshots/
+    ├── login.png
+    ├── researcher-dashboard.png
+    ├── business-dashboard.png
+    └── investor-dashboard.png
+```
+
+---
+
 ## 🏆 Core Features
 
 - 🔍 **Semantic search** over papers, researchers, projects, and investors
@@ -68,12 +123,15 @@ We filter, retrieve, rank, and then explain only the best matches.
 ## 📊 Matching Signals
 
 ### Researcher → Company
+
 `domain fit` • `commercial fit` • `company readiness` • `funding fit` • `collaboration fit` • `geography fit`
 
 ### Company → Researcher
+
 `domain fit` • `research strength` • `commercial fit` • `collaboration fit` • `geography fit`
 
 ### Investor → Project
+
 `domain fit` • `budget fit` • `risk fit` • `project maturity` • `company readiness` • `commercial potential`
 
 ---
@@ -117,7 +175,15 @@ python backend/scripts/ingest.py
 uvicorn main:app --reload
 ```
 
+The backend runs at:
+
+```text
+http://127.0.0.1:8000
+```
+
 ### 5. Start frontend
+
+Open a second terminal and run:
 
 ```bash
 streamlit run frontend/app.py
@@ -150,8 +216,8 @@ python backend/scripts/reset_users.py    # clear demo users
 ## 🔗 Links
 
 - 🎥 Demo Video: _add YouTube link_
-- 📩 Contact: lab2launchofficial@gmail.com
-  
+- 📩 Contact: **lab2launchofficial@gmail.com**
+
 ---
 
 ## 🌍 Vision
