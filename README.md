@@ -74,8 +74,8 @@ Add screenshots of your prototype here.
 ### Business Matching Dashboard
 
 <p align="center">
-  <img src="assets/screenshots/business-dashboard.png" alt="Business Dashboard" width="800"/>
-  <img src="assets/screenshots/business-dashboard-2.png" alt="Business Dashboard" width="800"/>
+  <img src="assets/screenshots/industry-dashboard.png" alt="Business Dashboard" width="800"/>
+  <img src="assets/screenshots/industry-dashboard-2.png" alt="Business Dashboard" width="800"/>
 </p>
 
 ### Investor Project Matching
