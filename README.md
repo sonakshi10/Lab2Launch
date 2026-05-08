@@ -2,17 +2,17 @@
   <img src="Lab2Launchlogo.png" alt="Lab2Launch Logo" width="230"/>
 </p>
 
-<h1 align="center">🚀 Lab2Launch</h1>
+<!-- <h1 align="center">🚀 Lab2Launch</h1> -->
 
 <p align="center">
   <b>AI-powered matchmaking for researchers, businesses, and investors</b>
 </p>
 
-<p align="center">
+<!-- <p align="center">
   <img src="https://img.shields.io/badge/Research-Gold-D4A017?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Connect-Cobalt%20Blue-0047AB?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Launch-Grey-808080?style=for-the-badge" />
-</p>
+</p> -->
 
 <p align="center">
   So great research does not stay stuck in PDFs.
