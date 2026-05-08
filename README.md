@@ -61,7 +61,7 @@ Add screenshots of your prototype here.
 
 ### Login / Role Selection
 
-
+  <img src="assets/screenshots/login.png" alt="Login Dashboard" width="800"/>
 
 
 ### Researcher Dashboard
@@ -75,12 +75,14 @@ Add screenshots of your prototype here.
 
 <p align="center">
   <img src="assets/screenshots/business-dashboard.png" alt="Business Dashboard" width="800"/>
+  <img src="assets/screenshots/business-dashboard-2.png" alt="Business Dashboard" width="800"/>
 </p>
 
 ### Investor Project Matching
 
 <p align="center">
   <img src="assets/screenshots/investor-dashboard.png" alt="Investor Dashboard" width="800"/>
+  <img src="assets/screenshots/investor-dashboard-1.png" alt="Investor Dashboard" width="800"/>
 </p>
 
 
