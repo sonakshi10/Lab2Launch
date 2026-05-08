@@ -61,9 +61,8 @@ Add screenshots of your prototype here.
 
 ### Login / Role Selection
 
-<p align="center">
-  <img src="assets/screenshots/login.png" alt="Login Screen" width="800"/>
-</p>
+
+
 
 ### Researcher Dashboard
 
@@ -84,16 +83,8 @@ Add screenshots of your prototype here.
   <img src="assets/screenshots/investor-dashboard.png" alt="Investor Dashboard" width="800"/>
 </p>
 
-Suggested screenshot folder:
 
-```text
-assets/
-└── screenshots/
-    ├── login.png
-    ├── researcher-dashboard.png
-    ├── business-dashboard.png
-    └── investor-dashboard.png
-```
+
 
 ---
 
