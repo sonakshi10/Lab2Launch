@@ -195,7 +195,7 @@ python backend/scripts/reset_users.py    # clear demo users
 
 ## 🔗 Links
 
-- 🎥 Demo Video: **https://youtu.be/WiCDZ65o1PY?is=hb6aVTGimXIqwE4g**
+- 🎥 Demo Video: **https://youtu.be/5dBGWdzgjjg?is=2Raqp3sseqx5LNJs**
 - 📩 Contact: **lab2launchofficial@gmail.com**
 
 ---
