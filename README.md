@@ -150,9 +150,8 @@ python backend/scripts/reset_users.py    # clear demo users
 ## 🔗 Links
 
 - 🎥 Demo Video: _add YouTube link_
-- 💻 Repository: _add GitHub/GitLab link_
-- 📩 Contact: _add team email_
-
+- 📩 Contact: lab2launchofficial@gmail.com
+  
 ---
 
 ## 🌍 Vision
