@@ -1,9 +1,7 @@
 <p align="center">
   <img src="Lab2Launchlogo.png" alt="Lab2Launch Logo" width="230"/>
 </p>
-
 <!-- <h1 align="center">🚀 Lab2Launch</h1> -->
-
 <p align="center">
   <b>AI-powered matchmaking for researchers, businesses, and investors</b>
 </p>
