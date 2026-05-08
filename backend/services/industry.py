@@ -3,6 +3,7 @@ import pandas as pd
 from config import SQLITE_DB_PATH, CHROMA_PAPERS
 from config import CHROMA_INVESTORS
 from services.embeddings import load_embedding_model, get_chroma_client, get_collection
+from services.metrics import calculate_industry_metrics
 
 def find_researchers_for_project(
     project_description,
@@ -80,7 +81,7 @@ def _project_text(project):
     ])
 
 
-def find_researcher_matches(project_description, n_results=10):
+def find_researcher_matches(project_description, company_domain="", company_country="", n_results=10):
     model = load_embedding_model()
     collection = get_collection(get_chroma_client(CHROMA_PAPERS), "paper_embeddings")
     embedding = model.encode(project_description).tolist()
@@ -114,6 +115,21 @@ def find_researcher_matches(project_description, n_results=10):
         paper_id = paper_ids[index] if index < len(paper_ids) else ""
         paper = paper_rows.get(paper_id, {})
         researcher = researcher_rows.get(researcher_id, {})
+        distance = distances[index] if index < len(distances) else None
+        
+        # Calculate metrics
+        metrics = calculate_industry_metrics(
+            distance=distance,
+            researcher_h_index=researcher.get("h index", ""),
+            researcher_patents=researcher.get("Number of patents", ""),
+            researcher_grants=researcher.get("Number of grants", ""),
+            company_domain=company_domain,
+            researcher_domain=metadata.get("domain", ""),
+            company_country=company_country,
+            researcher_country=researcher.get("Affiliated country", ""),
+            project_status="in-progress",
+        )
+        
         matches.append({
             "researcher_id": researcher_id,
             "name": researcher.get("Name", ""),
@@ -128,7 +144,8 @@ def find_researcher_matches(project_description, n_results=10):
             "matching_paper_title": paper.get("Name / Title") or metadata.get("paper_title", ""),
             "keywords": paper.get("Keywords", ""),
             "summary": paper.get("Summary") or paper.get("Abstract", ""),
-            "distance": distances[index] if index < len(distances) else None,
+            "distance": distance,
+            "metrics": metrics.to_dict(),
         })
 
     return {"status": "success", "results": matches}

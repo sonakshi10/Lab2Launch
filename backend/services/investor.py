@@ -2,6 +2,7 @@ import sqlite3
 import pandas as pd
 from config import SQLITE_DB_PATH, CHROMA_INVESTORS
 from services.embeddings import load_embedding_model, get_chroma_client, get_collection
+from services.metrics import calculate_investor_metrics
 
 def find_projects_for_investor(
     investor_query,
@@ -64,7 +65,7 @@ def _rows_by_id(table_name, id_column, ids):
     return {str(row[id_column]): dict(row) for row in rows}
 
 
-def find_project_matches(query, n_results=10):
+def find_project_matches(query, investor_domain="", investor_country="", investor_budget=None, investor_risk="Medium", n_results=10):
     model = load_embedding_model()
     collection = get_collection(get_chroma_client(CHROMA_INVESTORS), "investor_business_project_summaries_e5")
     embedding = model.encode("query: " + query).tolist()
@@ -83,6 +84,23 @@ def find_project_matches(query, n_results=10):
     projects = []
     for index, project_id in enumerate(ids):
         row = rows.get(project_id, {})
+        distance = distances[index] if index < len(distances) else None
+        
+        # Calculate metrics
+        metrics = calculate_investor_metrics(
+            distance=distance,
+            project_budget=row.get("Budget", ""),
+            investor_budget=investor_budget,
+            project_risk=row.get("Risk appetite", "") or metadatas[index].get("risk", ""),
+            investor_risk=investor_risk,
+            project_domain=row.get("Domain(s)", "") or metadatas[index].get("domain", ""),
+            investor_domain=investor_domain,
+            project_country=metadatas[index].get("country", ""),
+            investor_country=investor_country,
+            project_stage=row.get("Current status", ""),
+            company_maturity="growth",
+        )
+        
         projects.append({
             "project_id": project_id,
             "company_id": row.get("Company ID", ""),
@@ -97,7 +115,8 @@ def find_project_matches(query, n_results=10):
             "risk": row.get("Risk appetite") or metadatas[index].get("risk", ""),
             "collaboration_type": row.get("Preferred collaboration type", ""),
             "funded_by": row.get("Funded by (Investor ID)", ""),
-            "distance": distances[index] if index < len(distances) else None,
+            "distance": distance,
+            "metrics": metrics.to_dict(),
         })
 
     return {"status": "success", "results": projects}

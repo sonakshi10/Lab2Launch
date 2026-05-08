@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 from backend.db.profile_repository import save_industry_profile
+from components.metrics import show_industry_metrics, display_metrics_breakdown
 
 
 API_URL = "http://localhost:8000"
@@ -72,6 +73,12 @@ def _show_researcher(researcher):
             ("Patents", researcher.get("patents"), "IP signal"),
             ("Grants", researcher.get("grants"), "Funded work"),
         ])
+        
+        # Display recommendation metrics if available
+        if researcher.get("metrics"):
+            show_industry_metrics(researcher["metrics"])
+            display_metrics_breakdown(researcher["metrics"])
+        
         st.write(f"Matched paper: {researcher.get('matching_paper_title', '-')}")
         st.caption(_shorten(researcher.get("summary"), 260))
 
@@ -126,7 +133,12 @@ def industry_page():
                 try:
                     data = _post_json(
                         "/industry/researcher-matches",
-                        {"query": problem, "n_results": 8},
+                        {
+                            "query": problem,
+                            "company_domain": st.session_state.get("ip3", ""),
+                            "company_country": st.session_state.get("ip4", ""),
+                            "n_results": 8
+                        },
                     )
                     st.session_state.industry_researcher_matches = data.get("results", [])
                 except Exception as exc:

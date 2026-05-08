@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 from backend.db.profile_repository import save_investor_profile
+from components.metrics import show_investor_metrics, display_metrics_breakdown
 
 
 API_URL = "http://localhost:8000"
@@ -73,6 +74,12 @@ def _show_project(project):
             ("Team", project.get("team_size"), "Delivery capacity"),
             ("Mode", project.get("collaboration_type"), "Engagement type"),
         ])
+        
+        # Display investment fit metrics if available
+        if project.get("metrics"):
+            show_investor_metrics(project["metrics"])
+            display_metrics_breakdown(project["metrics"])
+        
         if project.get("domain"):
             st.caption(_shorten(project.get("domain"), 220))
         if project.get("targets"):
@@ -186,7 +193,14 @@ def investor_page():
                 try:
                     data = _post_json(
                         "/investor/projects/search",
-                        {"query": query, "n_results": 10},
+                        {
+                            "query": query,
+                            "investor_domain": st.session_state.get("iv3", ""),
+                            "investor_country": st.session_state.get("iv5", ""),
+                            "investor_budget": st.session_state.get("iv7", None),
+                            "investor_risk": st.session_state.get("iv4", "Medium"),
+                            "n_results": 10
+                        },
                     )
                     st.session_state.investor_project_matches = data.get("results", [])
                 except Exception as exc:

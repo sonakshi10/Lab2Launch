@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 from backend.db.profile_repository import save_researcher_profile
+from components.metrics import show_researcher_metrics, display_metrics_breakdown
 
 
 API_URL = "http://localhost:8000"
@@ -75,6 +76,12 @@ def _show_project(project):
             ("Timeline", project.get("timeline"), "Expected duration"),
             ("Domain", _shorten(project.get("domain"), 38), "Opportunity area"),
         ])
+        
+        # Display recommendation metrics if available
+        if project.get("metrics"):
+            show_researcher_metrics(project["metrics"])
+            display_metrics_breakdown(project["metrics"])
+        
         if project.get("targets"):
             st.caption(_shorten(project.get("targets"), 240))
 
@@ -232,7 +239,12 @@ def researcher_page():
                 try:
                     data = _post_json(
                         "/researcher/relevant-projects",
-                        {"query": project_query, "n_results": 6},
+                        {
+                            "query": project_query,
+                            "researcher_country": st.session_state.get("r_country", ""),
+                            "researcher_domain": st.session_state.get("r3", ""),
+                            "n_results": 6
+                        },
                     )
                     st.session_state.relevant_projects = data.get("results", [])
                 except Exception as exc:

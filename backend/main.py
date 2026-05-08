@@ -49,7 +49,12 @@ def researcher_api(query: str):
 @app.post("/researcher/relevant-projects")
 async def researcher_relevant_projects_api(request: Request):
     data = await request.json()
-    return find_relevant_projects(data.get("query", ""), data.get("n_results", 10))
+    return find_relevant_projects(
+        query=data.get("query", ""),
+        researcher_country=data.get("researcher_country", ""),
+        researcher_domain=data.get("researcher_domain", ""),
+        n_results=data.get("n_results", 10)
+    )
 
 @app.post("/researcher/similar-researchers")
 async def researcher_similar_researchers_api(request: Request):
@@ -112,7 +117,12 @@ def industry_api(project_description: str):
 @app.post("/industry/researcher-matches")
 async def industry_researcher_matches_api(request: Request):
     data = await request.json()
-    return find_researcher_matches(data.get("query", ""), data.get("n_results", 10))
+    return find_researcher_matches(
+        project_description=data.get("query", ""),
+        company_domain=data.get("company_domain", ""),
+        company_country=data.get("company_country", ""),
+        n_results=data.get("n_results", 10)
+    )
 
 @app.post("/industry/business/save")
 async def industry_business_save_api(request: Request):
@@ -141,7 +151,14 @@ def investor_api(query: str):
 @app.post("/investor/projects/search")
 async def investor_projects_search_api(request: Request):
     data = await request.json()
-    return find_project_matches(data.get("query", ""), data.get("n_results", 10))
+    return find_project_matches(
+        query=data.get("query", ""),
+        investor_domain=data.get("investor_domain", ""),
+        investor_country=data.get("investor_country", ""),
+        investor_budget=data.get("investor_budget"),
+        investor_risk=data.get("investor_risk", "Medium"),
+        n_results=data.get("n_results", 10)
+    )
 
 @app.post("/investor/profile/save")
 async def investor_profile_save_api(request: Request):

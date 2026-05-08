@@ -3,6 +3,7 @@ import pandas as pd
 from config import SQLITE_DB_PATH, CHROMA_RESEARCHERS
 from config import CHROMA_INVESTORS, CHROMA_PAPERS
 from services.embeddings import load_embedding_model, get_chroma_client, get_collection
+from services.metrics import calculate_researcher_metrics
 
 def find_researchers(query, preferred_country="", preferred_language="English", min_h_index=None, min_grants=None):
 
@@ -78,7 +79,7 @@ def _query_collection(path, collection_name, query, n_results=10, prefix="query:
     )
 
 
-def find_relevant_projects(query, n_results=10):
+def find_relevant_projects(query, researcher_country="", researcher_domain="", n_results=10):
     results = _query_collection(
         CHROMA_INVESTORS,
         "investor_business_project_summaries_e5",
@@ -95,6 +96,21 @@ def find_relevant_projects(query, n_results=10):
     projects = []
     for index, project_id in enumerate(ids):
         row = rows.get(project_id, {})
+        distance = distances[index] if index < len(distances) else None
+        
+        # Calculate metrics
+        metrics = calculate_researcher_metrics(
+            distance=distance,
+            researcher_h_index=None,  # Not applicable for researcher searching projects
+            researcher_i10_index=None,
+            researcher_grants=None,
+            project_domain=row.get("Domain(s)", "") or metadatas[index].get("domain", ""),
+            researcher_domain=researcher_domain,
+            project_country=metadatas[index].get("country", ""),
+            researcher_country=researcher_country,
+            collaboration_match=0.5,
+        )
+        
         projects.append({
             "project_id": project_id,
             "company_name": row.get("Company name") or metadatas[index].get("company_name", ""),
@@ -106,7 +122,8 @@ def find_relevant_projects(query, n_results=10):
             "targets": row.get("Targets", ""),
             "risk": row.get("Risk appetite") or metadatas[index].get("risk", ""),
             "collaboration_type": row.get("Preferred collaboration type", ""),
-            "distance": distances[index] if index < len(distances) else None,
+            "distance": distance,
+            "metrics": metrics.to_dict(),
         })
 
     return {"status": "success", "results": projects}
