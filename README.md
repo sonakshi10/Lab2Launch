@@ -68,7 +68,8 @@ Add screenshots of your prototype here.
 ### Researcher Dashboard
 
 <p align="center">
-  <img src="assets/screenshots/researcher-dashboard.png" alt="Researcher Dashboard" width="800"/>
+  <img src="assets/screenshots/researcher-dashboard-1.png" alt="Researcher Dashboard" width="800"/>
+   <img src="assets/screenshots/researcher-dashboard-2.png" alt="Researcher Dashboard" width="800"/>
 </p>
 
 ### Business Matching Dashboard
