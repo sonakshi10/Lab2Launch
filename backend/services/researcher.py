@@ -96,6 +96,12 @@ def find_relevant_projects(query, researcher_country="", researcher_domain="", n
     projects = []
     for index, project_id in enumerate(ids):
         row = rows.get(project_id, {})
+        
+        # Filter: only show projects visible to researchers
+        visible = row.get("Visible to researchers", 1)
+        if not visible:
+            continue
+        
         distance = distances[index] if index < len(distances) else None
         
         # Calculate metrics

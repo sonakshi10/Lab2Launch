@@ -205,9 +205,10 @@ def save_project(project):
             "Risk appetite",
             "Preferred collaboration type",
             "Funded by (Investor ID)",
-            "Project Outcome"
+            "Project Outcome",
+            "Visible to researchers"
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             project.get("project_id", ""),
@@ -224,6 +225,7 @@ def save_project(project):
             project.get("collaboration_type", ""),
             project.get("funded_by", ""),
             project.get("outcome"),
+            1,  # Mark all projects as visible to researchers by default
         ),
     )
     conn.commit()

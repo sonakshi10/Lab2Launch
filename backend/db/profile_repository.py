@@ -1,4 +1,5 @@
 import sqlite3
+from backend.config import SQLITE_DB_PATH
 
 conn = sqlite3.connect("app.db", check_same_thread=False)
 cursor = conn.cursor()
@@ -41,6 +42,16 @@ def init_db():
     """)
 
     conn.commit()
+
+    # Add visibility column to project_attributes in the main SQLite dataset if it doesn't exist
+    try:
+        with sqlite3.connect(SQLITE_DB_PATH) as visibility_conn:
+            visibility_cursor = visibility_conn.cursor()
+            visibility_cursor.execute('ALTER TABLE project_attributes ADD COLUMN "Visible to researchers" INTEGER DEFAULT 1')
+            visibility_conn.commit()
+    except sqlite3.OperationalError:
+        # Column already exists or the table is not yet present
+        pass
 
 
 # ---------- SAVE ----------

@@ -147,7 +147,6 @@ def researcher_page():
             ("h-index", st.session_state.get("rp4", 0), "Impact of published work"),
             ("i10-index", st.session_state.get("rp5", 0), "Papers with 10+ citations"),
             ("Keywords", _count_terms(st.session_state.get("rp6", "")), "Research signals"),
-            ("Matches", len(st.session_state.get("relevant_projects", [])), "Relevant projects loaded"),
         ])
         st.divider()
 
