@@ -57,8 +57,6 @@ We filter, retrieve, rank, and then explain only the best matches.
 
 ## 🖼️ Interface Preview
 
-Add screenshots of your prototype here.
-
 ### Login / Role Selection
 
   <img src="assets/screenshots/login.png" alt="Login Dashboard" width="800"/>
@@ -197,7 +195,7 @@ python backend/scripts/reset_users.py    # clear demo users
 
 ## 🔗 Links
 
-- 🎥 Demo Video: _add YouTube link_
+- 🎥 Demo Video: **https://youtu.be/WiCDZ65o1PY?is=hb6aVTGimXIqwE4g**
 - 📩 Contact: **lab2launchofficial@gmail.com**
 
 ---
