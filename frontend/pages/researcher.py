@@ -236,16 +236,17 @@ def researcher_page():
                 st.error("Add a research domain or keywords first.")
             else:
                 try:
-                    data = _post_json(
-                        "/researcher/relevant-projects",
-                        {
-                            "query": project_query,
-                            "researcher_country": st.session_state.get("r_country", ""),
-                            "researcher_domain": st.session_state.get("r3", ""),
-                            "n_results": 6
-                        },
-                    )
-                    st.session_state.relevant_projects = data.get("results", [])
+                    with st.spinner("Searching for relevant projects..."):
+                        data = _post_json(
+                            "/researcher/relevant-projects",
+                            {
+                                "query": project_query,
+                                "researcher_country": st.session_state.get("r_country", ""),
+                                "researcher_domain": st.session_state.get("r3", ""),
+                                "n_results": 6
+                            },
+                        )
+                        st.session_state.relevant_projects = data.get("results", [])
                 except Exception as exc:
                     st.error(f"Could not load projects: {exc}")
 
@@ -278,11 +279,12 @@ def researcher_page():
                 st.error("Describe your research focus first.")
             else:
                 try:
-                    data = _post_json(
-                        "/researcher/similar-researchers",
-                        {"query": query, "n_results": 8},
-                    )
-                    st.session_state.similar_researchers = data.get("results", [])
+                    with st.spinner("Searching for similar researchers..."):
+                        data = _post_json(
+                            "/researcher/similar-researchers",
+                            {"query": query, "n_results": 8},
+                        )
+                        st.session_state.similar_researchers = data.get("results", [])
                 except Exception as exc:
                     st.error(f"Could not find researchers: {exc}")
 
@@ -378,11 +380,12 @@ def researcher_page():
                 st.error("Enter a paper search query.")
             else:
                 try:
-                    data = _post_json(
-                        "/researcher/papers/search",
-                        {"query": query, "n_results": 8},
-                    )
-                    st.session_state.paper_search_results = data.get("results", [])
+                    with st.spinner("Searching papers..."):
+                        data = _post_json(
+                            "/researcher/papers/search",
+                            {"query": query, "n_results": 8},
+                        )
+                        st.session_state.paper_search_results = data.get("results", [])
                 except Exception as exc:
                     st.error(f"Could not search papers: {exc}")
 

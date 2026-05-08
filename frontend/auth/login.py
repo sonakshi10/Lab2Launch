@@ -14,13 +14,14 @@ def login_page():
     # Add logo and title with better styling
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        st.markdown(logo_header_html(height=120), unsafe_allow_html=True)
+        st.markdown(logo_header_html(height=110), unsafe_allow_html=True)
         st.markdown("""
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <p style="color: #0f87a3; font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600;">
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <h1 style="color: #1e40af; margin: 0; font-size: 2rem; line-height: 1.1;">Lab2Launch</h1>
+            <p style="color: #0369a1; font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; margin: 0.25rem 0 0;">
                 Research • Connect • Launch
             </p>
-            <hr style="margin: 1rem 0; border-color: #e8f3f0;">
+            <hr style="margin: 0.9rem 0 1.3rem; border-color: #e0f2fe;">
         </div>
         """, unsafe_allow_html=True)
 

@@ -21,7 +21,7 @@ def logo_img_tag(height: int = 80) -> str:
 def logo_header_html(height: int = 90) -> str:
     b64 = get_logo_base64()
     return f"""
-    <div style="display:flex; align-items:center; justify-content:center; gap:1rem; margin-bottom:1.5rem;">
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.45rem; margin-bottom:0.75rem;">
         <img src="data:image/jpeg;base64,{b64}" style="height:{height}px; width:auto;" alt="Lab2Launch">
     </div>
     """

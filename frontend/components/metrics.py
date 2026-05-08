@@ -80,9 +80,9 @@ def show_researcher_metrics(metrics: Dict[str, float]):
     with cols[0]:
         st.markdown(
             f"""
-            <div class="dash-card" style="background: linear-gradient(135deg, #0f6b57 0%, #0a4e3f 100%); color: white;">
-                <div class="dash-label" style="color: rgba(255,255,255,0.8);">Overall Score</div>
-                <div class="dash-value" style="font-size: 2rem;">{round(metrics.get('overall_score', 0))}%</div>
+            <div class="dash-card" style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); border: none;">
+                <div class="dash-label" style="color: rgba(255,255,255,0.85);">OVERALL SCORE</div>
+                <div class="dash-value" style="color: #ffffff; font-size: 2rem; font-weight: 700;">{round(metrics.get('overall_score', 0))}%</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -118,9 +118,9 @@ def show_industry_metrics(metrics: Dict[str, float]):
     with cols[0]:
         st.markdown(
             f"""
-            <div class="dash-card" style="background: linear-gradient(135deg, #0f6b57 0%, #0a4e3f 100%); color: white;">
-                <div class="dash-label" style="color: rgba(255,255,255,0.8);">Overall Score</div>
-                <div class="dash-value" style="font-size: 2rem;">{round(metrics.get('overall_score', 0))}%</div>
+            <div class="dash-card" style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); border: none;">
+                <div class="dash-label" style="color: rgba(255,255,255,0.85);">OVERALL SCORE</div>
+                <div class="dash-value" style="color: #ffffff; font-size: 2rem; font-weight: 700;">{round(metrics.get('overall_score', 0))}%</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -156,9 +156,9 @@ def show_investor_metrics(metrics: Dict[str, float]):
     with cols[0]:
         st.markdown(
             f"""
-            <div class="dash-card" style="background: linear-gradient(135deg, #0f6b57 0%, #0a4e3f 100%); color: white;">
-                <div class="dash-label" style="color: rgba(255,255,255,0.8);">Investment Score</div>
-                <div class="dash-value" style="font-size: 2rem;">{round(metrics.get('overall_score', 0))}%</div>
+            <div class="dash-card" style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); border: none;">
+                <div class="dash-label" style="color: rgba(255,255,255,0.85);">INVESTMENT SCORE</div>
+                <div class="dash-value" style="color: #ffffff; font-size: 2rem; font-weight: 700;">{round(metrics.get('overall_score', 0))}%</div>
             </div>
             """,
             unsafe_allow_html=True,

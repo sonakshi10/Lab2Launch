@@ -131,16 +131,17 @@ def industry_page():
                 st.error("Describe the problem first.")
             else:
                 try:
-                    data = _post_json(
-                        "/industry/researcher-matches",
-                        {
-                            "query": problem,
-                            "company_domain": st.session_state.get("ip3", ""),
-                            "company_country": st.session_state.get("ip4", ""),
-                            "n_results": 8
-                        },
-                    )
-                    st.session_state.industry_researcher_matches = data.get("results", [])
+                    with st.spinner("Finding best researcher matches..."):
+                        data = _post_json(
+                            "/industry/researcher-matches",
+                            {
+                                "query": problem,
+                                "company_domain": st.session_state.get("ip3", ""),
+                                "company_country": st.session_state.get("ip4", ""),
+                                "n_results": 8
+                            },
+                        )
+                        st.session_state.industry_researcher_matches = data.get("results", [])
                 except Exception as exc:
                     st.error(f"Could not find researchers: {exc}")
 

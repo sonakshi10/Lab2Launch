@@ -191,18 +191,19 @@ def investor_page():
                 st.error("Enter a project search query.")
             else:
                 try:
-                    data = _post_json(
-                        "/investor/projects/search",
-                        {
-                            "query": query,
-                            "investor_domain": st.session_state.get("iv3", ""),
-                            "investor_country": st.session_state.get("iv5", ""),
-                            "investor_budget": st.session_state.get("iv7", None),
-                            "investor_risk": st.session_state.get("iv4", "Medium"),
-                            "n_results": 10
-                        },
-                    )
-                    st.session_state.investor_project_matches = data.get("results", [])
+                    with st.spinner("Finding investment opportunities..."):
+                        data = _post_json(
+                            "/investor/projects/search",
+                            {
+                                "query": query,
+                                "investor_domain": st.session_state.get("iv3", ""),
+                                "investor_country": st.session_state.get("iv5", ""),
+                                "investor_budget": st.session_state.get("iv7", None),
+                                "investor_risk": st.session_state.get("iv4", "Medium"),
+                                "n_results": 10
+                            },
+                        )
+                        st.session_state.investor_project_matches = data.get("results", [])
                 except Exception as exc:
                     st.error(f"Could not find projects: {exc}")
 

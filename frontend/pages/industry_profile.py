@@ -1,12 +1,8 @@
 import streamlit as st
 from backend.db.profile_repository import save_industry_profile
-from components.logo import logo_header_html
 
 
 def industry_profile_page():
-    _, col2, _ = st.columns([1, 2, 1])
-    with col2:
-        st.markdown(logo_header_html(height=90), unsafe_allow_html=True)
     st.title("Create Industry Profile")
 
     col1, col2 = st.columns(2)
